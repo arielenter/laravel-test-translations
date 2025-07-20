@@ -1,0 +1,6 @@
+# exclude .gitignore and similar from the generated tarball
+.git*                                   export-ignore
+tests/                                  export-ignore
+docker-compose.yml                      export-ignore
+phpunit.xml                             export-ignore
+composer.lock                           export-ignore
