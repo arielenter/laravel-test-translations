@@ -362,10 +362,10 @@ trait TestTranslations
     ): array {
         $ignore ??= $this->ignorePlaceholder;
         $regex ??= $this->placeholderRegex;
-        
-        (is_string($ignore)) && $ignore = explode($ignore, '|');
+
+        (is_string($ignore)) && $ignore = explode('|', $ignore);
         preg_match_all($regex, $trans, $matches);
-        
+
         $unique = array_values(array_unique($matches[0]));
         unset($matches[0]);
         $ignore = array_merge($ignore, Arr::flatten($matches));
