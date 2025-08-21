@@ -1,8 +1,8 @@
 {
     "name": "arielenter/laravel-test-translations",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "dist": {
-        "url": "https://github.com/arielenter/laravel-test-translations/archive/refs/tags/v1.0.1.tar.gz",
+        "url": "https://github.com/arielenter/laravel-test-translations/archive/refs/tags/v1.0.2.tar.gz",
         "type": "tar"
     },
     "description": "Easy way to test the existence of translations, placeholders and replace keys.",

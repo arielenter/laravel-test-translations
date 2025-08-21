@@ -633,6 +633,20 @@ class TestTranslationsTest extends TestCase
     }
 
     #[Test]
+    public function try_get_trans_can_handdle_non_string_trans(): void
+    {
+        $transKey = 'exam.ple';
+        $line = [ 'non_string' ];
+        trans()->addLines(
+            [ $transKey => $line ], App::currentLocale()
+        );
+        $trans = $this->tryGetTrans($transKey);
+        $this->assertIsArray($trans);
+        $this->assertEquals($line, $trans);
+    }
+
+
+    #[Test]
     public function placeholders_were_found_translation_key(): void
     {
         $placeholder = ':one';
