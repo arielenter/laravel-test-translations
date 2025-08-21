@@ -12,9 +12,9 @@ return [
     'fail_to_find_trans_key' => "Fail to assert that a translation exists for "
         . "the following key and locale.$keyAndLocale",
 
-    'replace_key_is_repeated' => "Fail to assert that none of the replace keys "
-        . "are repeated.\nThe following formats were used for the same key:"
-        . "\nFIRST INSTANCE: ‘:already_used_key’\nSECOND: ‘:replace_key’",
+    'replace_key_is_repeated' => "Fail to assert that none of the replace "
+        . "keys are repeated.\nThe following formats were used for the same "
+        . "key:\nFIRST INSTANCE: ‘:already_used_key’\nSECOND: ‘:replace_key’",
     
     'trans_from_key_lacks_placeholder' => $replaceKeyMissing
         . $keyLocaleAndTrans,
