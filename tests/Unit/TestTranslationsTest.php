@@ -645,7 +645,6 @@ class TestTranslationsTest extends TestCase
         $this->assertEquals($line, $trans);
     }
 
-
     #[Test]
     public function placeholders_were_found_translation_key(): void
     {

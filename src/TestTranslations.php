@@ -85,12 +85,16 @@ trait TestTranslations
     ): mixed {
         $this->assertTranslationExist($transKey, $locale);
         
-        $phsDiscarted = $this->assertAllReplaceKeysExistAndReturnDiscarted(
+        $keysPlcHldrsRmvd = $this->assertAllReplaceKeysExistAndReturnDiscarted(
             $transKey, $replace, $locale, $number
         );
+
+        if (!is_string($keysPlcHldrsRmvd)) {
+            return $keysPlcHldrsRmvd;
+        }
         
         $this->assertTransLacksPlaceholders(
-            $phsDiscarted, $ignore, $regex,
+            $keysPlcHldrsRmvd, $ignore, $regex,
             $this->getPlaceholdersRemainMsg(
                 $transKey, $replace, $locale, $number
             )
