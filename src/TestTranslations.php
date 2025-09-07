@@ -173,7 +173,7 @@ trait TestTranslations
             return $this->getTrans($transKey, $replace, $locale, $number);
         }
         
-        $placeholderDiscarted = $beforeReplace;
+        $transKeyPlcHldrRmvd = $beforeReplace;
         $replaceSorted = $this->sortByKeyLengthDescending($replace);
         $alreadyUsed = [];
 
@@ -181,14 +181,14 @@ trait TestTranslations
             $alreadyUsed = $this->assertReplaceKeyHasNotBeenUsedAlready(
                 $replaceKey, $alreadyUsed
             );
-            $placeholderDiscarted = $this
+            $transKeyPlcHldrRmvd = $this
                 ->assertReplaceKeyIsPresentAsPlaceholder(
                     $transKey, $locale, $beforeReplace, $replaceKey,
-                    $replaceValue, $placeholderDiscarted
+                    $replaceValue, $transKeyPlcHldrRmvd
                 );
         }
 
-        return $placeholderDiscarted;
+        return $transKeyPlcHldrRmvd;
     }
     
     protected function getTrans(
