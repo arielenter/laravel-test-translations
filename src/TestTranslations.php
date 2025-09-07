@@ -131,7 +131,39 @@ trait TestTranslations
         return $transKey;
     }
 
-    protected function assertAllReplaceKeysExistAndReturnDiscarted(
+    /**
+     * Same as ‘assertAllReplaceKeysExist’ but the value returned is the result
+     * of discarding all placeholders corresponding to the replace keys from
+     * the translation by replacing them with an empty string.
+     *
+     * @param string                         $transKey Key of the translation
+     *                                                 or the translation its
+     *                                                 self where the expected
+     *                                                 placeholders will be
+     *                                                 looked for.
+     * @param array<string,string>           $replace  Pair of keys and values
+     *                                                 to replace the 
+     *                                                 translation placeholders
+     *                                                 with.
+     * @param ?string                        $locale   Optional. Only
+     *                                                 significant if
+     *                                                 translation key exist.
+     *                                                 If null, the current
+     *                                                 application’s locale
+     *                                                 will be used.
+     * @param null|int|float|array|Countable $number   Optional. If a non null
+     *                                                 value is given,
+     *                                                 ‘trans_choice’ function
+     *                                                 is used insted of 
+     *                                                 ‘trans’ to get the 
+     *                                                 requested translation.
+     *
+     * @return mixed If a non string translation exist for the given key, all
+     *               assertions are omitted and the found value is returned.
+     *               Otherwise, the translation is returned with all
+     *               placeholders corresponding to every replace key discarted.
+     */
+    public function assertAllReplaceKeysExistAndReturnDiscarted(
         string $transKey, array $replace, ?string $locale = null,
         null|int|float|array|\Countable $number = null
     ): mixed {
@@ -291,9 +323,9 @@ trait TestTranslations
      *                                                 requested translation.
      *
      * @return mixed If a non string translation exist for the given key, all
-     *               assertions are omitted and the found value is returned. If 
-     *               all assertions pass, the translation requested is returned
-     *               with the replacement values applied.
+     *               assertions are omitted and the found value is returned.
+     *               Otherwise, if all assertions pass, the translation
+     *               requested is returned with the replacement values applied.
      */
     public function assertAllReplaceKeysExistAsPlaceholders(
         string $transKey, array $replace, ?string $locale = null,

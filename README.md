@@ -122,42 +122,13 @@ Thought ‘tryGetTrans’ will most likely end up becoming the most useful trait
      */
 ```
 
-### assertTransLacksPlaceholders
+### assertAllReplaceKeysExistAndReturnDiscarted
 
 ```php
     /**
-     * Asserts all replace keys exist as placeholders inside of whatever 
-     * translation is returned by the standard translation function using an 
-     * empty ‘replace’ argument, regardless of whether a translation 
-     * exists for the given key or not.
-     *
-     * @param string                         $transKey Key of the translation
-     *                                                 or the translation its
-     *                                                 self where the expected
-     *                                                 placeholders will be
-     *                                                 looked for.
-     * @param array<string,string>           $replace  Pair of keys and values
-     *                                                 to replace the 
-     *                                                 translation placeholders
-     *                                                 with.
-     * @param ?string                        $locale   Optional. Only
-     *                                                 significant if
-     *                                                 translation key exist.
-     *                                                 If null, the current
-     *                                                 application’s locale
-     *                                                 will be used.
-     * @param null|int|float|array|Countable $number   Optional. If a non null
-     *                                                 value is given,
-     *                                                 ‘trans_choice’ function
-     *                                                 is used insted of 
-     *                                                 ‘trans’ to get the 
-     *                                                 requested translation.
-     *
-     * @return mixed If a non string translation exist for the given key, all
-     *               assertions are omitted and the found value is returned. If 
-     *               all assertions pass, the translation requested is returned
-     *               with the replacement values applied.
-     */
+     * Same as ‘assertAllReplaceKeysExist’ but the value returned is the result
+     * of discarding all placeholders corresponding to the replace keys from
+     * the translation by replacing them with an empty string.
 ```
 
 ### assertTransLacksPlaceholders
