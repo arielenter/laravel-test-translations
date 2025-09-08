@@ -116,6 +116,14 @@ Thought ‘tryGetTrans’ will most likely end up becoming the most useful trait
      *                                                 is used insted of 
      *                                                 ‘trans’ to get the 
      *                                                 requested translation.
+     * @param ?string                        $message  Optional. Custom 
+     *                                                 assertion fail message
+     *                                                 to throw if it’s found
+     *                                                 that the translarion
+     *                                                 lacks at least one
+     *                                                 instance of a
+     *                                                 placeholder for any of
+     *                                                 the replace keys.
      *
      * @return string If the assertion passes the requested translation will be
      *                returned applying the replace argument provided.

@@ -339,6 +339,19 @@ class TestTranslationsTest extends TestCase
     }
 
     #[Test]
+    public function a_custom_fail_message_can_be_given_for_assertion_of_keys(
+    ): void {
+        $customMsg = 'This is a custom message.';
+        $this->assertAssertionFailsWithMessage(
+            fn() => $this->assertAllReplaceKeysExistAsPlaceholders(
+                'without any placeholder', [ 'expected' => 'but not found' ],
+                message: $customMsg
+            ),
+            $customMsg
+        );
+    }
+
+    #[Test]
     public function assert_trans_lacks_placeholder_passes_if_so(): void
     {
         $this->assertTransLacksPlaceholders('i don\'t have placeholders');

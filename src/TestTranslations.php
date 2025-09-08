@@ -157,6 +157,14 @@ trait TestTranslations
      *                                                 is used insted of 
      *                                                 ‘trans’ to get the 
      *                                                 requested translation.
+     * @param ?string                        $message  Optional. Custom 
+     *                                                 assertion fail message
+     *                                                 to throw if it’s found
+     *                                                 that the translarion
+     *                                                 lacks at least one
+     *                                                 instance of a
+     *                                                 placeholder for any of
+     *                                                 the replace keys.
      *
      * @return mixed If a non string translation exist for the given key, all
      *               assertions are omitted and the found value is returned.
@@ -165,7 +173,8 @@ trait TestTranslations
      */
     public function assertAllReplaceKeysExistAndReturnDiscarted(
         string $transKey, array $replace, ?string $locale = null,
-        null|int|float|array|\Countable $number = null
+        null|int|float|array|\Countable $number = null,
+        ?string $message = null
     ): mixed {
         $beforeReplace = $this->getTrans($transKey, [], $locale, $number);
         
@@ -184,7 +193,7 @@ trait TestTranslations
             $transKeyPlcHldrRmvd = $this
                 ->assertReplaceKeyIsPresentAsPlaceholder(
                     $transKey, $locale, $beforeReplace, $replaceKey,
-                    $replaceValue, $transKeyPlcHldrRmvd
+                    $replaceValue, $transKeyPlcHldrRmvd, $message
                 );
         }
 
@@ -247,7 +256,8 @@ trait TestTranslations
     
     protected function assertReplaceKeyIsPresentAsPlaceholder(
         string $transKey, ?string $locale, string $trans,
-        string $replaceKey, mixed $replaceValue, string $placeholderDiscarted
+        string $replaceKey, mixed $replaceValue, string $placeholderDiscarted,
+        ?string $message = null
     ): string {
         if ($replaceValue instanceof Closure) {
             $replace = [
@@ -261,13 +271,12 @@ trait TestTranslations
 
         $beforeDiscart = $placeholderDiscarted;
         $placeholderDiscarted = __($placeholderDiscarted, $replace);
-        
-        $this->assertNotSame(
-            $beforeDiscart, $placeholderDiscarted,
-            $this->getFailToFindPlaceholderMsg(
-                $transKey, $locale, $trans, $replaceKey, $replaceValue
-            )
+
+        $message ??= $this->getFailToFindPlaceholderMsg(
+            $transKey, $locale, $trans, $replaceKey, $replaceValue
         );
+        
+        $this->assertNotSame($beforeDiscart, $placeholderDiscarted, $message);
 
         return $placeholderDiscarted;
     }
@@ -321,6 +330,14 @@ trait TestTranslations
      *                                                 is used insted of 
      *                                                 ‘trans’ to get the 
      *                                                 requested translation.
+     * @param ?string                        $message  Optional. Custom 
+     *                                                 assertion fail message
+     *                                                 to throw if it’s found
+     *                                                 that the translarion
+     *                                                 lacks at least one
+     *                                                 instance of a
+     *                                                 placeholder for any of
+     *                                                 the replace keys.
      *
      * @return mixed If a non string translation exist for the given key, all
      *               assertions are omitted and the found value is returned.
@@ -329,10 +346,11 @@ trait TestTranslations
      */
     public function assertAllReplaceKeysExistAsPlaceholders(
         string $transKey, array $replace, ?string $locale = null,
-        null|int|float|array|\Countable $number = null
+        null|int|float|array|\Countable $number = null,
+        ?string $message = null
     ): mixed {
         $this->assertAllReplaceKeysExistAndReturnDiscarted(
-            $transKey, $replace, $locale, $number
+            $transKey, $replace, $locale, $number, $message
         );
 
         return $this->getTrans($transKey, $replace, $locale, $number);
