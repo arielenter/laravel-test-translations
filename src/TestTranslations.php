@@ -100,7 +100,7 @@ trait TestTranslations
             )
         );
 
-        return $this->getTrans($transKey, $replace, $locale, $number);
+        return $this->getTransOrChoice($transKey, $replace, $locale, $number);
     }
 
     /**
@@ -121,14 +121,22 @@ trait TestTranslations
         
         $this->assertTrue(
             trans()->has($transKey, $locale, false),
-            __(
-                ServiceProvider::TRANSLATIONS . '::errors.'
-                    . 'fail_to_find_trans_key',
+            $this->getTestTranslationError(
+                'fail_to_find_trans_key',
                 [ 'trans_key' => $transKey, 'locale' => $locale ]
             )
         );
 
         return $transKey;
+    }
+
+    protected function getTestTranslationError(
+        string $transKey, array $replace
+    ): string {
+        return __(
+            ServiceProvider::TRANSLATIONS . "::errors.$transKey",
+            $replace
+        );
     }
 
     /**
@@ -176,10 +184,14 @@ trait TestTranslations
         null|int|float|array|\Countable $number = null,
         ?string $message = null
     ): mixed {
-        $beforeReplace = $this->getTrans($transKey, [], $locale, $number);
+        $beforeReplace = $this->getTransOrChoice(
+            $transKey, [], $locale, $number
+        );
         
         if (!is_string($beforeReplace)) {
-            return $this->getTrans($transKey, $replace, $locale, $number);
+            return $this->getTransOrChoice(
+                $transKey, $replace, $locale, $number
+            );
         }
         
         $transKeyPlcHldrRmvd = $beforeReplace;
@@ -200,7 +212,7 @@ trait TestTranslations
         return $transKeyPlcHldrRmvd;
     }
     
-    protected function getTrans(
+    protected function getTransOrChoice(
         string $transKey, array $replace = [], ?string $locale = null,
         null|int|float|array|\Countable $number = null
     ): mixed {
@@ -238,9 +250,8 @@ trait TestTranslations
 
         if (array_key_exists($lower, $alreadyUsed)) {
             $this->fail(
-                __(
-                    ServiceProvider::TRANSLATIONS . '::errors.'
-                        . 'replace_key_is_repeated',
+                $this->getTestTranslationError(
+                    'replace_key_is_repeated',
                     [
                         'replace_key' => $replaceKey,
                         'already_used_key' => $alreadyUsed[$lower]
@@ -271,19 +282,21 @@ trait TestTranslations
 
         $beforeDiscart = $placeholderDiscarted;
         $placeholderDiscarted = __($placeholderDiscarted, $replace);
-
-        $message ??= $this->getFailToFindPlaceholderMsg(
-            $transKey, $locale, $trans, $replaceKey, $replaceValue
-        );
         
-        $this->assertNotSame($beforeDiscart, $placeholderDiscarted, $message);
+        $this->assertNotSame(
+            $beforeDiscart, $placeholderDiscarted,
+            $this->getFailToFindPlaceholderMsg(
+                $transKey, $locale, $trans, $replaceKey, $replaceValue,
+                $message
+            )
+        );
 
         return $placeholderDiscarted;
     }
 
     protected function getFailToFindPlaceholderMsg(
         string $transKey, ?string $locale, string $trans,
-        string $replaceKey, mixed $replaceValue
+        string $replaceKey, mixed $replaceValue, ?string $message = null
     ): string {
         $locale ??= App::currentLocale();
         if ($replaceValue instanceof Closure) {
@@ -297,10 +310,14 @@ trait TestTranslations
             'replace_key' => $replaceKey,
             'placeholder_forms' => $placeholderForms
         ];
-        $errorKey = '::errors.';
-        $errorKey .= ($transKey == $trans) ?
-            'trans_lacks_placeholder' : 'trans_from_key_lacks_placeholder';
-        return __(ServiceProvider::TRANSLATIONS . $errorKey, $replace);
+        
+        if (!is_null($message)) {
+            return __($message, $replace);
+        }
+        
+        $errorKey = ($transKey == $trans) ? 'trans_lacks_placeholder'
+            : 'trans_from_key_lacks_placeholder';
+        return $this->getTestTranslationError($errorKey, $replace);
     }
 
     /**
@@ -353,7 +370,7 @@ trait TestTranslations
             $transKey, $replace, $locale, $number, $message
         );
 
-        return $this->getTrans($transKey, $replace, $locale, $number);
+        return $this->getTransOrChoice($transKey, $replace, $locale, $number);
     }
 
     /**
@@ -395,14 +412,18 @@ trait TestTranslations
         );
 
         if (!empty($placeholdersFound)) {
+            $replace = [
+                'trans' => $trans,
+                'placeholders_found' => json_encode($placeholdersFound)
+            ];
+            
             if (!is_null($message)) {
-                $replace = [
-                    'placeholders_found' => json_encode($placeholdersFound)
-                ];
                 $this->fail(__($message, $replace));
             }
             $this->fail(
-                $this->getPlaceholdersWereFoundMsg($trans, $placeholdersFound)
+                $this->getTestTranslationError(
+                    'placeholders_were_found', $replace
+                )
             );
         }
 
@@ -432,27 +453,14 @@ trait TestTranslations
         null|int|float|array|\Countable $number = null
     ): string {
         $locale ??= App::currentLocale();
-        $trans = $this->getTrans($transKey, [], $locale, $number);
+        $trans = $this->getTransOrChoice($transKey, [], $locale, $number);
         
-        return __(
-            ServiceProvider::TRANSLATIONS . '::errors.placeholders_remain',
+        return $this->getTestTranslationError(
+            'placeholders_remain',
             [
                 'trans' => $trans, 'locale' => $locale,
                 'replace_keys' => json_encode(array_keys($replace)),
                 'trans_key' => $transKey
-            ]
-        );
-    }
-
-    protected function getPlaceholdersWereFoundMsg(
-        string $trans, array $placeholdersFound
-    ): string {
-        return __(
-            ServiceProvider::TRANSLATIONS . '::errors.'
-                . 'placeholders_were_found',
-            [
-                'trans' => $trans,
-                'placeholders_found' => json_encode($placeholdersFound)
             ]
         );
     }

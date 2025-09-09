@@ -192,8 +192,7 @@ class TestTranslationsTest extends TestCase
         ?string $placeholderForms = null, ?string $locale = null,
         ?Closure $closure = null
     ): string {
-        $placeholderForms ??= ":$replaceKey, :" . Str::ucfirst($replaceKey)
-                . ' and/or :' . Str::upper($replaceKey);
+        $placeholderForms ??= $this->getPlaceholderForms($replaceKey);
         $trans = __($transKey, [], $locale);
         $errorTransReplace = [
             'trans' => $trans, 'replace_key' => $replaceKey,
@@ -213,6 +212,12 @@ class TestTranslationsTest extends TestCase
             return __($errorTransKey, $errorTransReplace);
         }
         return $this->tryGetTrans($errorTransKey, $errorTransReplace);
+    }
+
+    public function getPlaceholderForms(string $replaceKey): string
+    {
+        return ":$replaceKey, :" . Str::ucfirst($replaceKey)
+            . ' and/or :' . Str::upper($replaceKey);
     }
     
     #[Test]
@@ -341,13 +346,23 @@ class TestTranslationsTest extends TestCase
     #[Test]
     public function a_custom_fail_message_can_be_given_for_assertion_of_keys(
     ): void {
-        $customMsg = 'This is a custom message.';
+        $customMsg = 'This is a custom message. :replace_key '
+            . ':placeholder_forms';
+        $replaceKey = 'expected';
         $this->assertAssertionFailsWithMessage(
             fn() => $this->assertAllReplaceKeysExistAsPlaceholders(
                 'without any placeholder', [ 'expected' => 'but not found' ],
                 message: $customMsg
             ),
-            $customMsg
+            __(
+                $customMsg,
+                [
+                    'replace_key' => 'expected',
+                    'placeholder_forms' => $this->getPlaceholderForms(
+                        $replaceKey
+                    )
+                ]
+            )
         );
     }
 
